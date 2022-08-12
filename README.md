@@ -109,25 +109,18 @@ a **Dictionary** safely. The function can still be considered immutable.
 
 ## Regex Performance
 
-On Performance. This task is in general incredible slow in .Net it has todo
-with its regex Engine. If I do the same in Perl like the Dictionary I get
-around **4-5 times faster** results!
+On Performance. This task is in general incredible slow in .Net. It has todo
+with its regex Engine. When I do the same in Perl like the Dictionary algorithm
+I get result that are **4-5 times faster**!
 
-You also get the same results if you change the `splitWords` function into
-a function that just splits a string on a whitespace character. For Benchmarking
-the different solution, you get a better understand of the difference between
-the solution. The above solutions are so slow, because like 80%+ or more time
-is spent in the Regex Engine.
-
-Changing it into word Split, you get a better understanding of the performance
-impact of the choosed algorithm. 
-
-Just switch the `splitIntoWords` and `splitIntoWords'` functions with each other.
+You also get the same improvements when you change the `splitWords` function into
+a function that just splits a string on a whitespace character. Just switch the 
+`splitIntoWords` and `splitIntoWords'` functions with each other.
 
 Now the task we are given are not exactly solved, as we get extra punctuations
 and other garbage. 
 
-But, it shows better the impact of the choosen Algorithm instead of benchmarking
+But it shows better the impact of the choosen Algorithm instead of benchmarking
 the .Net Regex Engine.
 
     All Equal (should be true): false
