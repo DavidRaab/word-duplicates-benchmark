@@ -2,16 +2,15 @@
 use strict;
 use warnings;
 use v5.32;
-use Benchmark qw(cmpthese);
+use Benchmark qw(:hireswallclock cmpthese);
 
 # Read whole file into $file
 open my $fh, '<', 'LoremIpsum.txt' or die "Cannot open file: $!\n";
-local $/;
-my $file = <$fh>;
+my $file = do { local $/; <$fh> };
 close $fh;
 
-# Run the function 2000 times
-cmpthese(2000, {
+# Run each benchmark at least 3 seconds
+cmpthese(-3, {
     'Regex' => sub { duplicatesRegex($file) },
     'Split' => sub { duplicatesSplit($file) },
 });
