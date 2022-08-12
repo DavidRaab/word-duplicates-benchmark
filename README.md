@@ -109,9 +109,9 @@ a **Dictionary** safely. The function can still be considered immutable.
 
 ## Regex Performance
 
-On Performance. This task is in general incredible slow in .Net. It has todo
-with its regex Engine. When I do the same in Perl like the Dictionary algorithm
-I get result that are **4-5 times faster**!
+On Performance. This task is slow in .Net. It has todo with its regex Engine.
+When I do the **Mutable Array** algorithm in Perl it is around two times faster.
+(Look into `dups.pl`)
 
 You also get the same improvements when you change the `splitWords` function into
 a function that just splits a string on a whitespace character. Just switch the 
