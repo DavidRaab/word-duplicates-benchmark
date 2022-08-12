@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./bin/Release/net6.0/Dups LoremIpsum.txt
