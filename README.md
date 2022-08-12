@@ -31,7 +31,7 @@ Running this program produces an output like this on my machine.
     Dictionary        2000:  205.0/s
     CountBy LC        2000:  181.0/s
 
-    Full Mutable Versions -- Maximum Performance
+    Full Mutable Versions
     Mutable Array     2000:  203.5/s
     Scan Array        1000:  124.0/s
     Scan Array Full   1000:  123.2/s
