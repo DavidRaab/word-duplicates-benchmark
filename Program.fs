@@ -11,18 +11,16 @@ let splitIntoWords str = [|
 let splitIntoWords' (str:string) =
     str.Split(' ');
 
+// Count words by using a Map
 let wordCount words =
     Seq.fold (fun count word ->
         count |> Map.change word (function
             | None   -> Some 1
             | Some x -> Some (x+1)
         )
-        // Map.change word (Some << Option.fold (+) 1) count
-        // (Option.fold (fun state x -> Some (state.Value + x)) (Some 1))
-        // (Option.map (fun x -> x+1) >> Option.orElse (Some 1)) 
     ) Map.empty words
-    
 
+// Takes a wordCount map, and only returns the ones that occur more than 1 times
 let onlyDuplicates wordCount =
     let folder state key value =
         if   value > 1
@@ -30,18 +28,26 @@ let onlyDuplicates wordCount =
         else state
     Map.fold folder [] wordCount
 
+// Another implementation
 let onlyDuplicates' wordCount =
     wordCount
     |> Map.filter (fun key value -> value > 1)
     |> Map.toList
     |> List.map fst
 
+// A more abstract alternative to change a value in a map
+// Either inserts Key/Value into map, if key is not present.
+// Or reads previous value of key, and gives you change to combine old and new value
+// Example:
+//   This lookups key "Foo" and either insert "1" or add "1" to the already present value
+//      map |> addCombine (fun ov nv -> ov + nv) "Foo" 1
 let inline addCombine combine (key:'Key) (value:'Value) map =
     Map.change key (function
         | None   -> Some value
         | Some x -> Some (combine x value)
     ) map
 
+// Returns a key from a dictionary or the default
 let getValue def key (dict:System.Collections.Generic.IDictionary<_,_>) =
     let mutable value = Unchecked.defaultof<_>
     if   dict.TryGetValue(key, &value)
@@ -63,16 +69,21 @@ let benchPrint (msg:string) count code =
 
 
 // Functions to Benchmark
+
+// Map ListComp
 let sol1 text =
     [for word in (wordCount (splitIntoWords text)) do
         if word.Value > 1 then word.Key]
 
+// Map fold
 let sol2 text =
     onlyDuplicates (wordCount (splitIntoWords text))
 
+// Map chain
 let sol3 text =
     onlyDuplicates' (wordCount (splitIntoWords text))
 
+// CountBy
 let sol4 text =
     splitIntoWords text
     |> Seq.countBy id
@@ -80,54 +91,58 @@ let sol4 text =
     |> Seq.map fst
     |> Seq.toList
 
+// CountBy Choose
 let sol5 text =
     splitIntoWords text
     |> Seq.countBy id
     |> Seq.choose (fun (word,n) -> if n > 1 then Some word else None)
     |> Seq.toList
 
+// CountBy List
 let sol6 text =
     splitIntoWords text
     |> Seq.toList
     |> List.countBy id
     |> List.choose (fun (word,n) -> if n > 1 then Some word else None)
 
+// ResizeArray
 let sol7 text =
     let ra = ResizeArray<_>()
     let mutable lastAdded = ""
-//    let mutable previous  = ""
+    let mutable previous  = ""
     for word in Seq.sort (splitIntoWords text) do
-        if word <> lastAdded then //&& word = previous then
+        if word <> lastAdded && word = previous then
             ra.Add word
             lastAdded <- word
-//        previous <- word
+        previous <- word
     Seq.toList ra
 
+// addCombine
 let sol8 text =
-    splitIntoWords text
-    |> Seq.fold (fun state word ->
+    splitIntoWords text |> Seq.fold (fun state word ->
         addCombine (+) word 1 state
-       ) Map.empty
+    ) Map.empty
     |> Map.fold (fun state key value ->
-        if   value > 1 
+        if   value > 1
         then key :: state
         else state
     ) []
 
+// Dictionary
 let sol9 text =
     let dic = System.Collections.Generic.Dictionary()
-    let get = getValue 1
 
     for word in splitIntoWords text do
-        dic.[word] <- get word dic + 1
-    
+        dic.[word] <- (getValue 0 word dic) + 1
+
     [for KeyValue (key,value) in dic do
         if value > 1 then key]
 
+// CountBy LC
 let sol10 text =
     let wordCount = Seq.countBy id (splitIntoWords text)
     [for (word,count) in wordCount do
-        if count > 1 then 
+        if count > 1 then
             yield word]
 
 
@@ -149,6 +164,8 @@ let fns = [
 ]
 
 // Full mutable versions
+
+// Mutable Array
 let duplicateMut1 text =
     let words = System.Collections.Generic.Dictionary<_,_>()
     for word in splitIntoWords text do
@@ -156,7 +173,7 @@ let duplicateMut1 text =
         if   words.TryGetValue(word, &count)
         then words.[word] <- count + 1
         else words.[word] <- 1
-    
+
     let result = ResizeArray<_>()
     for word in words do
         if word.Value > 1 then
@@ -164,6 +181,7 @@ let duplicateMut1 text =
 
     result
 
+// Helper for duplicateMut2 (Scan Array)
 let inline contains2 element array =
     let mutable found = 0
     let max = Array.length array
@@ -171,9 +189,9 @@ let inline contains2 element array =
         if i < max then
             if array.[i] = element then
                 found <- found + 1
-                if found = 2 then 
+                if found = 2 then
                     true
-                else 
+                else
                     loop (i+1)
             else
                 loop (i+1)
@@ -181,6 +199,7 @@ let inline contains2 element array =
             false
     loop 0
 
+// Scan Array
 let duplicateMut2 text =
     let result = System.Collections.Generic.HashSet<_>()
     let words  = splitIntoWords text
@@ -191,6 +210,7 @@ let duplicateMut2 text =
 
     result
 
+// Scan Array Full
 let duplicateMut3 text =
     let result = System.Collections.Generic.HashSet<_>()
     let words  = splitIntoWords text
@@ -201,6 +221,7 @@ let duplicateMut3 text =
 
     result
 
+// Array Only
 let duplicateMut4 text =
     splitIntoWords text
     |> Array.countBy id
@@ -209,12 +230,12 @@ let duplicateMut4 text =
 
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
     // Check if all Functions return the same
     let results =
         [for (_,f,count) in fns do
             System.String.Join(",", (Array.sort (List.toArray (f text))))]
-    
+
     let isEqual = List.forall (fun res -> res = List.head results) (List.tail results)
     printfn "All Equal (should be true): %b" isEqual
 
@@ -223,6 +244,9 @@ let main argv =
     printfn "Benchmarking..."
     for (msg,code,count) in fns do
         benchPrint msg count (fun () -> code text)
+
+    printfn ""
+    printfn "Full Mutable Versions"
 
     benchPrint "Mutable Array"   2000 (fun () -> duplicateMut1 text)
     benchPrint "Scan Array"      1000 (fun () -> duplicateMut2 text)
