@@ -50,13 +50,13 @@ a list with List Comprehension.
 3. **Map ListComp**, **Map fold**, **Map chain** are still the same algorithm, but
 using a **Map** instead of a **Dictionary**.
 
-4. **CountBy Choose**  **CountBy List** are minor changes to **CountBy**.
+4. **CountBy Choose** and **CountBy List** are minor changes to **CountBy**.
 
 5. **ResizeArray** was one of the *more intelligent* solution someone suggested
-instead of using a **Dictionary**. We split the words. Then we sort it. Then
-we iterate through the words. We keep track of the previous word, and the last
-added word to a mutable array. If we did not already added the word, and the word
-appears twice, then we add the word.
+instead of using a **Dictionary**. Split the words, sort it, then iterate through
+the words. Keep track of the previous word, and the last added word to the result.
+We add the word if we didn't added the word already and it is the same as previous
+(so it appears at least twice).
 
 6. **addCombine** is basically the same as **Map Fold** but uses the **addCombine**
 helper function.
@@ -73,14 +73,15 @@ words with a **Dictionary** and then only picks duplicates and pushes it into
 an **ResizeArray**.
 
 2. **Scan Array** is the silly idea, to not use a **Dictionary** and to re-scan
-thw word **List** over and over again, and stop if at least two invocations was
+the word **List** over and over again, and stop if at least two invocations was
 found. Then we add it to a **HashSet**. This way we avoid adding the same word
 to the result over and over again.
 
 3. **Scan Array Full** is the same as **Scan Array** but just scans the whole array
 without short circuiting.
 
-4. **Array Only** is the same as **CountBy** but returns an **Array** instead of **List**
+4. **Array Only** is the same as **CountBy** but does all operations on an
+an **Array** and retuns an **Array** instead of **List**.
 
 ## Final Verdict
 
