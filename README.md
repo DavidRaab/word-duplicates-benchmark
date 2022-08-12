@@ -11,8 +11,8 @@ because of hashing blablablabla...
 So I created this Benchmark and added a lot of different versions to this
 problem.
 
-    Remember the task is not to get unique words. Its about **only** getting the
-    words in a text file that apperas **more** than **once**!
+> Remember the task is not to get unique words. Its about **only** getting the
+> words in a text file that apperas **more** than **once**!
 
 ## Running
 
@@ -39,48 +39,48 @@ Running this program produces an output like this on my machine.
     
 ## Interpretation of Results
 
-**CountBy** is the fastest version. It just uses the built-in **Seq.countBy**
+1. **CountBy** is the fastest version. It just uses the built-in **Seq.countBy**
 function. This btw. uses a **Dictionary** under the hood.
 
-**Dictionary** is the version I would write if **CountBy** would not exists. Or
+2. **Dictionary** is the version I would write if **CountBy** would not exists. Or
 in other words, if I had to implement it myself. What was the task to begin with.
 It uses a mutable dictionary for the interim data and then transforms it into
 a list with List Comprehension.
 
-**Map ListComp**, **Map fold**, **Map chain** are still the same algorithm, but
+3. **Map ListComp**, **Map fold**, **Map chain** are still the same algorithm, but
 using a **Map** instead of a **Dictionary**.
 
-**CountBy Choose**  **CountBy List** are minor changes to **CountBy**.
+4. **CountBy Choose**  **CountBy List** are minor changes to **CountBy**.
 
-**ResizeArray** was one of the *more intelligent* solution someone suggested
+5. **ResizeArray** was one of the *more intelligent* solution someone suggested
 instead of using a **Dictionary**. We split the words. Then we sort it. Then
 we iterate through the words. We keep track of the previous word, and the last
 added word to a mutable array. If we did not already added the word, and the word
 appears twice, then we add the word.
 
-**addCombine** is basically the same as **Map Fold** but uses the **addCombine**
+6. **addCombine** is basically the same as **Map Fold** but uses the **addCombine**
 helper function.
 
-**CountBy LC** is the same as **CountBy** but uses List Comprehension instead
+7. **CountBy LC** is the same as **CountBy** but uses List Comprehension instead
 of Function Piping.
 
 ## *The Full Mutable* versions all use only Mutable Data-Structures.
 
 All versions above return an immutable List.
 
-**MutableArray** is the same as **CountBy** or **Dictionary**, it counts the
+1. **MutableArray** is the same as **CountBy** or **Dictionary**, it counts the
 words with a **Dictionary** and then only picks duplicates and pushes it into
 an **ResizeArray**.
 
-**Scan Array** is the silly idea, to not use a **Dictionary** and to re-scan
+2. **Scan Array** is the silly idea, to not use a **Dictionary** and to re-scan
 thw word **List** over and over again, and stop if at least two invocations was
 found. Then we add it to a **HashSet**. This way we avoid adding the same word
 to the result over and over again.
 
-**Scan Array Full** is the same as **Scan Array** but just scans the whole array
+3. **Scan Array Full** is the same as **Scan Array** but just scans the whole array
 without short circuiting.
 
-**Array Only** is the same as **CountBy** but returns an **Array** instead of **List**
+4. **Array Only** is the same as **CountBy** but returns an **Array** instead of **List**
 
 ## Final Verdict
 
