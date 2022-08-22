@@ -43,7 +43,7 @@ sub duplicatesSplit {
     my ( $text ) = @_;
     
     my %dups;
-    for my $word (split ' ', $text) {
+    for my $word (split / /, $text) {
         $dups{$word}++;
     }
     
